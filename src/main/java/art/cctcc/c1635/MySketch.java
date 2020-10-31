@@ -28,10 +28,10 @@ public class MySketch extends PApplet {
     public void setup() {
         colorMode(RGB);
         for (int i = 0; i < AMOUNT; i++) {
-            var x = random(1);
-            var y = random(1);
-            var size = random(MIN_SIZE, MAX_SIZE);
-            var color = color(random(150, 250), random(150, 250), random(150, 250));
+            float x = random(1);
+            float y = random(1);
+            float size = random(MIN_SIZE, MAX_SIZE);
+            int color = color(random(150, 250), random(150, 250), random(150, 250));
             pool[i] = MyObject.getInstance(x, y, size, color);
         }
         img = loadImage(getClass().getResource("/nctu.png").getFile());
