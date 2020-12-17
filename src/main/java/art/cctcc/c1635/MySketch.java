@@ -11,10 +11,10 @@ import processing.core.*;
 public class MySketch extends PApplet {
 
    static public final int MIN_SIZE = 5;
-   static public final int MAX_SIZE = 50;
+   static public final int MAX_SIZE = 60;
    static final int AMOUNT = 500;
-   static final float DELTA_MOVE = 3.0f; // in pixel
-   static final float DELTA_SIZE = 0.01f; // in ratio
+   static final float DELTA_MOVE = 3.0f;
+   static final float DELTA_SIZE = 0.008f;
 
    List<MyObject> pool = new ArrayList<>(AMOUNT);
    int bgColor = 255;
@@ -37,7 +37,7 @@ public class MySketch extends PApplet {
       while (pool.size() < AMOUNT) {
          var x = random(1);
          var y = random(1);
-         var size = random(MIN_SIZE, MAX_SIZE);
+         var size = random(MIN_SIZE * height / 768, MAX_SIZE * height / 768);
          var color = color(random(150, 250), random(150, 250), random(150, 250));
          pool.add(MyObject.getInstance(x, y, size, color));
       }
@@ -49,7 +49,7 @@ public class MySketch extends PApplet {
       List.copyOf(pool).stream()
               .forEach(obj -> {
                  obj.paint(this);
-                 obj.move(random(-DELTA_MOVE, DELTA_MOVE) / width,
+                 obj.move(random(-DELTA_MOVE, DELTA_MOVE) / height,
                          random(-DELTA_MOVE, DELTA_MOVE) / height);
                  if (pool.size() == AMOUNT) {
                     obj.resize(random(-DELTA_SIZE * height, DELTA_SIZE * height));

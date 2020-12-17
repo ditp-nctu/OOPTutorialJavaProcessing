@@ -2,8 +2,7 @@ package art.cctcc.c1635;
 
 import static art.cctcc.c1635.MySketch.*;
 import java.awt.Color;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import processing.data.JSONObject;
 
 /**
  * An abstract class to be extended by actual shape classes.
@@ -11,8 +10,6 @@ import java.util.logging.Logger;
  * @author Jonathan Chang, Chun-yien <ccy@cctcc.art>
  */
 public abstract class MyObject {
-
-   static final Logger logger = Logger.getGlobal();
 
    float x, y; // in ratio: [0, 1)
    float size; // in pixels
@@ -41,12 +38,15 @@ public abstract class MyObject {
    }
 
    public static MyObject getInstance(float x, float y, float size, int color) {
-
       var result = Math.random() > 0.5
               ? new Circle(x, y, size, color)
               : new Rect(x, y, size, color);
-      logger.log(Level.INFO, "Creating {0}", result.toString());
       return result;
+   }
+
+   public static MyObject getInstance(JSONObject jo) {
+      return getInstance(jo.getFloat("x"), jo.getFloat("y"),
+              jo.getFloat("size"), jo.getInt("color"));
    }
 
    public int darkerColor() {

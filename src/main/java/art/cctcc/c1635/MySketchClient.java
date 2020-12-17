@@ -26,15 +26,14 @@ public class MySketchClient extends MySketch {
               ))
               .build();
       while (pool.size() < AMOUNT) {
-         System.out.print(pool.size() + ": ");
          client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                  .thenApply(HttpResponse::body)
                  .thenApply(this::parseJSONObject)
-                 .thenApply(
-                         jo -> MyObject.getInstance(
-                                 jo.getFloat("x"), jo.getFloat("y"),
-                                 jo.getFloat("size"), jo.getInt("color")))
-                 .thenAccept(pool::add)
+                 .thenApply(MyObject::getInstance)
+                 .thenAccept(myObj -> {
+                    pool.add(myObj);
+                    System.out.printf("%d: Creating %s\n", pool.size(), myObj);
+                 })
                  .join();
       }
    }
