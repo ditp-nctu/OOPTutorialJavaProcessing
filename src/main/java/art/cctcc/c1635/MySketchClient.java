@@ -5,7 +5,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import processing.core.*;
-import static processing.core.PConstants.RGB;
 
 /**
  *
@@ -13,39 +12,31 @@ import static processing.core.PConstants.RGB;
  */
 public class MySketchClient extends MySketch {
 
-   String server_address = "http://localhost:8001/object";
+   String server_address = "http://localhost";
+   int port = 8001;
 
-   Runnable generator = () -> {
+   @Override
+   public void generate() {
       HttpClient client = HttpClient.newHttpClient();
       HttpRequest request = HttpRequest.newBuilder()
-              .uri(URI.create(String.format(server_address + "?%s=%d&%s=%d",
+              .uri(URI.create(String.format("%s:%d/object?%s=%d&%s=%d",
+                      server_address, port,
                       "MIN_SIZE", MIN_SIZE * height / 768,
                       "MAX_SIZE", MAX_SIZE * height / 768)
               ))
               .build();
       while (pool.size() < AMOUNT) {
+         System.out.print(pool.size() + ": ");
          client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                  .thenApply(HttpResponse::body)
-                 .thenAccept(body -> {
-                    var result = parseJSONObject(body);
-                    var x = result.getFloat("x");
-                    var y = result.getFloat("y");
-                    var size = result.getFloat("size");
-                    var color = result.getInt("color");
-                    synchronized (MySketchClient.class) {
-                       pool.add(MyObject.getInstance(x, y, size, color));
-                       System.out.printf("%d: %f,%f,%f,%d\n", pool.size(), x, y, size, color);
-                    }
-                 })
+                 .thenApply(this::parseJSONObject)
+                 .thenApply(
+                         jo -> MyObject.getInstance(
+                                 jo.getFloat("x"), jo.getFloat("y"),
+                                 jo.getFloat("size"), jo.getInt("color")))
+                 .thenAccept(pool::add)
                  .join();
       }
-   };
-
-   @Override
-   public void setup() {
-      colorMode(RGB);
-      img = loadImage(getClass().getResource("/nctu.png").getFile());
-      new Thread(generator).start();
    }
 
    public static void main(String[] args) {

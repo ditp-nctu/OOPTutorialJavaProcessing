@@ -15,6 +15,7 @@ import processing.core.PApplet;
 import processing.data.JSONObject;
 import static art.cctcc.c1635.MySketch.MIN_SIZE;
 import static art.cctcc.c1635.MySketch.MAX_SIZE;
+import java.io.PrintWriter;
 
 /**
  *
@@ -47,9 +48,10 @@ public class ServerMain {
                  .put("size", p.random(min_size, max_size))
                  .put("color", p.color(p.random(150, 250), p.random(150, 250), p.random(150, 250)));
          System.out.println("response = " + response.toString());
-         try (OutputStream outputStream = exchange.getResponseBody()) {
+         try (var outputStream = exchange.getResponseBody();
+                 var writer = new PrintWriter(outputStream)) {
             exchange.sendResponseHeaders(200, response.toString().length());
-            outputStream.write(response.toString().getBytes());
+            response.write(writer);
             outputStream.flush();
          }
       });

@@ -2,6 +2,8 @@ package art.cctcc.c1635;
 
 import static art.cctcc.c1635.MySketch.*;
 import java.awt.Color;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An abstract class to be extended by actual shape classes.
@@ -10,41 +12,53 @@ import java.awt.Color;
  */
 public abstract class MyObject {
 
-    float x, y; // in ratio: [0, 1)
-    float size; // in pixels
-    int color;  // RGB
+   static final Logger logger = Logger.getGlobal();
 
-    public MyObject(float x, float y, float size, int color) {
-        this.x = x;
-        this.y = y;
-        this.size = size;
-        this.color = color;
-    }
+   float x, y; // in ratio: [0, 1)
+   float size; // in pixels
+   int color;  // RGB
 
-    public void move(float delta_x, float delta_y) {
-        this.x += delta_x + 1;
-        this.y += delta_y + 1;
-        this.x %= 1;
-        this.y %= 1;
-    }
+   public MyObject(float x, float y, float size, int color) {
+      this.x = x;
+      this.y = y;
+      this.size = size;
+      this.color = color;
+   }
 
-    public void resize(float delta) {
-        if (delta < 0 && this.size < MIN_SIZE
-                || delta > 0 && this.size > MAX_SIZE) {
-            return;
-        }
-        this.size += delta;
-    }
+   public void move(float delta_x, float delta_y) {
+      this.x += delta_x + 1;
+      this.y += delta_y + 1;
+      this.x %= 1;
+      this.y %= 1;
+   }
 
-    public static MyObject getInstance(float x, float y, float size, int color) {
-        return Math.random() > 0.5
-                ? new Circle(x, y, size, color)
-                : new Rect(x, y, size, color);
-    }
+   public void resize(float delta) {
+      if (delta < 0 && this.size < MIN_SIZE
+              || delta > 0 && this.size > MAX_SIZE) {
+         return;
+      }
+      this.size += delta;
+   }
 
-    public int darkerColor() {
-        return new Color(color).darker().getRGB();
-    }
+   public static MyObject getInstance(float x, float y, float size, int color) {
 
-    public abstract void paint(MySketch canvas);
+      var result = Math.random() > 0.5
+              ? new Circle(x, y, size, color)
+              : new Rect(x, y, size, color);
+      logger.log(Level.INFO, "Creating {0}", result.toString());
+      return result;
+   }
+
+   public int darkerColor() {
+      return new Color(color).darker().getRGB();
+   }
+
+   public abstract void paint(MySketch canvas);
+
+   @Override
+   public String toString() {
+      return this.getClass().getSimpleName()
+              + "{" + "x=" + x + ", y=" + y + ", size=" + size + ", color=" + color + '}';
+   }
+
 }
