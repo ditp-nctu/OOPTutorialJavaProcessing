@@ -1,14 +1,11 @@
 package art.cctcc.c1635;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import processing.core.*;
 import static processing.core.PConstants.RGB;
 import static processing.core.PConstants.RIGHT;
@@ -42,7 +39,7 @@ public class MySketchClient extends MySketch {
                          "MIN_SIZE", (int) MIN_SIZE,
                          "MAX_SIZE", (int) MAX_SIZE)))
                  .build();
-         var s = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                  .thenApply(HttpResponse::body)
                  .thenAccept(body -> {
                     var result = parseJSONObject(body);
