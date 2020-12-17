@@ -1,7 +1,11 @@
 package art.cctcc.c1635;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.Spliterator;
+import java.util.stream.Stream;
 import processing.core.*;
 
 /**
@@ -16,7 +20,7 @@ public class MySketch extends PApplet {
    static final float DELTA_MOVE = 3.0f; // in pixel
    static final float DELTA_SIZE = 0.01f; // in ratio
 
-   MyObject[] pool = new MyObject[AMOUNT];
+   List<MyObject> pool = new ArrayList<>(AMOUNT);
    int bgColor = 255;
    PImage img;
    boolean isClicked;
@@ -34,7 +38,7 @@ public class MySketch extends PApplet {
          var y = random(1);
          var size = random(MIN_SIZE, MAX_SIZE);
          var color = color(random(150, 250), random(150, 250), random(150, 250));
-         pool[i] = MyObject.getInstance(x, y, size, color);
+         pool.add(MyObject.getInstance(x, y, size, color));
       }
       img = loadImage(getClass().getResource("/nctu.png").getFile());
    }
@@ -42,14 +46,15 @@ public class MySketch extends PApplet {
    @Override
    public void draw() {
       background(bgColor);
-      Arrays.stream(pool)
-              .filter(Objects::nonNull)
-              .forEach(obj -> {
-                 obj.paint(this);
-                 obj.move(random(-DELTA_MOVE / width, DELTA_MOVE / width),
-                         random(-DELTA_MOVE / height, DELTA_MOVE / height));
-                 obj.resize(random(-DELTA_SIZE * height, DELTA_SIZE * height));
-              });
+      var it = pool.iterator();
+      List.copyOf(pool).stream().forEach(obj -> {
+         obj.paint(this);
+         obj.move(random(-DELTA_MOVE / width, DELTA_MOVE / width),
+                 random(-DELTA_MOVE / height, DELTA_MOVE / height));
+         if (pool.size() == AMOUNT) {
+            obj.resize(random(-DELTA_SIZE * height, DELTA_SIZE * height));
+         }
+      });
       if (mousePressed) {
          fill(255);
          circle(width / 2, height / 2, img.pixelWidth * 1.5f);

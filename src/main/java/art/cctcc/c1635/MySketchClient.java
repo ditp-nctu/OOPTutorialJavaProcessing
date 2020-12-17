@@ -15,7 +15,6 @@ public class MySketchClient extends MySketch {
 
    String server_address = "http://localhost:8001/object";
 
-   int counter = 0;
    Runnable generator = () -> {
       HttpClient client = HttpClient.newHttpClient();
       HttpRequest request = HttpRequest.newBuilder()
@@ -24,17 +23,20 @@ public class MySketchClient extends MySketch {
                       "MAX_SIZE", MAX_SIZE * height / 768)
               ))
               .build();
-      while (counter < AMOUNT) {
+      while (pool.size() < AMOUNT) {
          client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                  .thenApply(HttpResponse::body)
                  .thenAccept(body -> {
+
                     var result = parseJSONObject(body);
                     var x = result.getFloat("x");
                     var y = result.getFloat("y");
                     var size = result.getFloat("size");
                     var color = result.getInt("color");
-                    System.out.printf("%d: %f,%f,%f,%d\n", counter, x, y, size, color);
-                    pool[counter++] = MyObject.getInstance(x, y, size, color);
+                    synchronized (MySketchClient.class) {
+                       pool.add(MyObject.getInstance(x, y, size, color));
+                       System.out.printf("%d: %f,%f,%f,%d\n", pool.size(), x, y, size, color);
+                    }
                  })
                  .join();
       }
