@@ -1,6 +1,7 @@
 package art.cctcc.c1635;
 
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -17,6 +18,7 @@ import static processing.core.PConstants.RIGHT;
 public class MySketchClient extends MySketch {
 
    List<MyObject> pool = new ArrayList<>();
+   String server = "http://localhost:8001";
 
    @Override
    public void settings() {
@@ -35,7 +37,7 @@ public class MySketchClient extends MySketch {
       if (pool.size() < AMOUNT) {
 
          HttpRequest request = HttpRequest.newBuilder()
-                 .uri(URI.create(String.format("http://localhost:8001/?%s=%d&%s=%d",
+                 .uri(URI.create(String.format(server + "?%s=%d&%s=%d",
                          "MIN_SIZE", (int) MIN_SIZE,
                          "MAX_SIZE", (int) MAX_SIZE)))
                  .build();
