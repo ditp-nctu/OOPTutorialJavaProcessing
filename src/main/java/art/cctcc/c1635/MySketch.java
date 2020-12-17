@@ -1,11 +1,7 @@
 package art.cctcc.c1635;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.Spliterator;
-import java.util.stream.Stream;
 import processing.core.*;
 
 /**
@@ -14,9 +10,9 @@ import processing.core.*;
  */
 public class MySketch extends PApplet {
 
+   static public final int MIN_SIZE = 5;
+   static public final int MAX_SIZE = 50;
    static final int AMOUNT = 1000;
-   static final int MIN_SIZE = 5;
-   static final int MAX_SIZE = 50;
    static final float DELTA_MOVE = 3.0f; // in pixel
    static final float DELTA_SIZE = 0.01f; // in ratio
 
@@ -49,8 +45,8 @@ public class MySketch extends PApplet {
       var it = pool.iterator();
       List.copyOf(pool).stream().forEach(obj -> {
          obj.paint(this);
-         obj.move(random(-DELTA_MOVE / width, DELTA_MOVE / width),
-                 random(-DELTA_MOVE / height, DELTA_MOVE / height));
+         obj.move(random(-DELTA_MOVE, DELTA_MOVE) / width,
+                 random(-DELTA_MOVE, DELTA_MOVE) / height);
          if (pool.size() == AMOUNT) {
             obj.resize(random(-DELTA_SIZE * height, DELTA_SIZE * height));
          }

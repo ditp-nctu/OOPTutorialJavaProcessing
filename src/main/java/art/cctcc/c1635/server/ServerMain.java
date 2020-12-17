@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import processing.core.PApplet;
 import processing.data.JSONObject;
+import static art.cctcc.c1635.MySketch.MIN_SIZE;
+import static art.cctcc.c1635.MySketch.MAX_SIZE;
 
 /**
  *
@@ -36,18 +38,14 @@ public class ServerMain {
                          .map(s -> s.split("="))
                          .filter(a -> a.length == 2)
                          .collect(Collectors.toMap(p -> p[0].toUpperCase(), p -> p[1]));
-         var min_size = Integer.parseInt(params.getOrDefault("MIN_SIZE", "5"));
-         var max_size = Integer.parseInt(params.getOrDefault("MAX_SIZE", "50"));
-         var x = p.random(1);
-         var y = p.random(1);
-         var size = p.random(min_size, max_size);
-         var color = p.color(p.random(150, 250), p.random(150, 250), p.random(150, 250));
+         var min_size = Integer.parseInt(params.getOrDefault("MIN_SIZE", String.valueOf(MIN_SIZE)));
+         var max_size = Integer.parseInt(params.getOrDefault("MAX_SIZE", String.valueOf(MAX_SIZE)));
          var response = new JSONObject();
          response.put("query", query)
-                 .put("x", x)
-                 .put("y", y)
-                 .put("size", size)
-                 .put("color", color);
+                 .put("x", p.random(1))
+                 .put("y", p.random(1))
+                 .put("size", p.random(min_size, max_size))
+                 .put("color", p.color(p.random(150, 250), p.random(150, 250), p.random(150, 250)));
          System.out.println("response = " + response.toString());
          try (OutputStream outputStream = exchange.getResponseBody()) {
             exchange.sendResponseHeaders(200, response.toString().length());

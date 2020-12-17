@@ -27,7 +27,6 @@ public class MySketchClient extends MySketch {
          client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                  .thenApply(HttpResponse::body)
                  .thenAccept(body -> {
-
                     var result = parseJSONObject(body);
                     var x = result.getFloat("x");
                     var y = result.getFloat("y");
