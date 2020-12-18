@@ -38,7 +38,7 @@ public abstract class MyObject {
    }
 
    public static MyObject getInstance(float x, float y, float size, int color) {
-      var result = Math.random() > 0.5
+      MyObject result = Math.random() > 0.5
               ? new Circle(x, y, size, color)
               : new Rect(x, y, size, color);
       return result;

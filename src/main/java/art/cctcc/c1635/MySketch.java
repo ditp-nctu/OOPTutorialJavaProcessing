@@ -1,6 +1,7 @@
 package art.cctcc.c1635;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import processing.core.*;
 
@@ -35,10 +36,10 @@ public class MySketch extends PApplet {
 
    public void generate() {
       while (pool.size() < AMOUNT) {
-         var x = random(1);
-         var y = random(1);
-         var size = random(MIN_SIZE * height / 768, MAX_SIZE * height / 768);
-         var color = color(random(150, 250), random(150, 250), random(150, 250));
+         float x = random(1);
+         float y = random(1);
+         float size = random(MIN_SIZE * height / 768, MAX_SIZE * height / 768);
+         int color = color(random(150, 250), random(150, 250), random(150, 250));
          pool.add(MyObject.getInstance(x, y, size, color));
       }
    }
@@ -46,7 +47,8 @@ public class MySketch extends PApplet {
    @Override
    public void draw() {
       background(bgColor);
-      List.copyOf(pool).stream()
+      List<MyObject> dupe = new ArrayList<>(pool);
+      dupe.stream()
               .forEach(obj -> {
                  obj.paint(this);
                  obj.move(random(-DELTA_MOVE, DELTA_MOVE) / height,
