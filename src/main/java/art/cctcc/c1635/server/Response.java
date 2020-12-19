@@ -13,24 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package art.cctcc.c1635;
+package art.cctcc.c1635.server;
+
+import processing.core.PApplet;
+import processing.data.JSONObject;
 
 /**
  *
- * @author Jonathan Chang, Chun-yien <ccy@cctcc.art>
+ * @author Jonathan Chang, Chun-yien <ccy@musicapoetica.org>
  */
-public class Rect extends MyObject {
+public class Response {
 
-   public Rect(float x, float y, float size, int color) {
-      super(x, y, size, color);
+   static PApplet p = new PApplet();
+   public final JSONObject jo;
+
+   public Response(String query, int min_size, int max_size) {
+      this.jo = new JSONObject()
+              .put("query", query)
+              .put("x", p.random(1))
+              .put("y", p.random(1))
+              .put("size", p.random(min_size, max_size))
+              .put("color", p.color(p.random(150, 250), p.random(150, 250), p.random(150, 250)));
    }
 
    @Override
-   public void paint(MySketch canvas) {
-      canvas.fill(color);
-      canvas.stroke(darkerColor());
-      canvas.rect(canvas.width * x - size / 2,
-              canvas.height * y - size / 2,
-              size, size);
+   public String toString() {
+      return jo.toString();
    }
 }
