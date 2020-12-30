@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package art.cctcc.c1635;
+package art.cctcc.c1635.client;
 
+import art.cctcc.c1635.MyObject;
+import art.cctcc.c1635.MySketch;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
