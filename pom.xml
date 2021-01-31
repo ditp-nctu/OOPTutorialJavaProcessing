@@ -133,7 +133,7 @@
       <groupId>quil</groupId>
       <artifactId>jogl-all-fat</artifactId>
       <version>[2.3.2,)</version>
-    </dependency>-->
+    </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
