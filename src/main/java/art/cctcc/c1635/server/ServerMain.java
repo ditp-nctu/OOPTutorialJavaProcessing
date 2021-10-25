@@ -57,7 +57,7 @@ public class ServerMain {
                  .filter(a -> a.length == 2)
                  .collect(Collectors.toMap(p -> p[0].toLowerCase(), p -> p[1]));
          min_size = Integer.parseInt(params.get("min_size"));
-         max_size = Integer.parseInt(params.get("man_size"));
+         max_size = Integer.parseInt(params.get("max_size"));
       } catch (NullPointerException ex) {
          logger.log(Level.INFO, " empty query, using defaults.");
       } catch (NumberFormatException ex) {

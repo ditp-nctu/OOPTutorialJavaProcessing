@@ -18,6 +18,7 @@ package art.cctcc.c1635.client;
 import art.cctcc.c1635.MyObject;
 import art.cctcc.c1635.MySketch;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -29,33 +30,38 @@ import processing.core.*;
  */
 public class MySketchClient extends MySketch {
 
-   String server_address = "http://localhost"; // 修改為你的 server 位置
-   int port = 8001;
+  String server_address = "http://localhost"; // 修改為你的 server 位置
+  int port = 8001;
 
-   @Override
-   public void generate() {
-      var client = HttpClient.newHttpClient();
-      var request = HttpRequest.newBuilder()
-              .uri(URI.create(String.format("%s:%d/object?%s=%d&%s=%d",
-                      server_address, port,
-                      "MIN_SIZE", MIN_SIZE * height / 768,
-                      "MAX_SIZE", MAX_SIZE * height / 768)))
-              .build();
-      while (pool.size() < AMOUNT) {
-         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                 .thenApply(HttpResponse::body)
-                 .thenApply(this::parseJSONObject)
-                 .thenApply(MyObject::getInstance)
-                 .thenAccept(myObj -> {
-                    pool.add(myObj);
-                    System.out.printf("%d: Creating %s\n", pool.size(), myObj);
-                 })
-                 .join();
-      }
-   }
+  @Override
+  public void generate() {
+    
+    if (args != null) {
+      if (args.length > 0) server_address = "http://" + args[0];
+      if (args.length > 1) port = parseInt(args[1]);
+    }
+    var client = HttpClient.newHttpClient();
+    var request = HttpRequest.newBuilder()
+            .uri(URI.create(String.format("%s:%d/object?%s=%d&%s=%d",
+                    server_address, port,
+                    "MIN_SIZE", MIN_SIZE * height / 768,
+                    "MAX_SIZE", MAX_SIZE * height / 768)))
+            .build();
+    while (pool.size() < AMOUNT) {
+      client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+              .thenApply(HttpResponse::body)
+              .thenApply(this::parseJSONObject)
+              .thenApply(MyObject::getInstance)
+              .thenAccept(myObj -> {
+                pool.add(myObj);
+                System.out.printf("%d: Creating %s\n", pool.size(), myObj);
+              })
+              .join();
+    }
+  }
 
-   public static void main(String[] args) {
-      System.setProperty("sun.java2d.uiScale", "1.0");
-      PApplet.main(MySketchClient.class, args);
-   }
+  public static void main(String[] args) {
+    System.setProperty("sun.java2d.uiScale", "1.0");
+    PApplet.main(MySketchClient.class, args);
+  }
 }
