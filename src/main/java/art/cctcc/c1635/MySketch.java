@@ -15,8 +15,8 @@
  */
 package art.cctcc.c1635;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -32,28 +32,29 @@ public class MySketch extends PApplet {
   public static final float DELTA_MOVE = 3.0f;
   public static final float DELTA_SIZE = 0.007f;
 
-  protected List<MyObject> pool = new ArrayList<>(AMOUNT);
+  protected List<MyObject> pool = new Vector<>(AMOUNT);
   int bgColor = 255;
   PImage img;
   boolean isClicked;
 
   @Override
   public void settings() {
-    
+
     fullScreen();
   }
 
   @Override
   public void setup() {
-    
+
     colorMode(RGB);
+    frameRate(30);
     img = loadImage(getClass().getResource("/nctu.png").getFile());
     new Thread(this::generate).start();
     MyObject.HEIGHT = height;
   }
 
   public void generate() {
-    
+
     while (pool.size() < AMOUNT) {
       var x = random(1);
       var y = random(1);
@@ -67,8 +68,9 @@ public class MySketch extends PApplet {
 
   @Override
   public void draw() {
-    
+
     background(bgColor);
+    textSize(MAX_SIZE / 2 * height / 768);
     List.copyOf(pool).stream()
             .forEach(obj -> {
               obj.paint(this);
@@ -76,8 +78,12 @@ public class MySketch extends PApplet {
                       random(-DELTA_MOVE, DELTA_MOVE) / height);
               if (pool.size() == AMOUNT) {
                 obj.resize(random(-DELTA_SIZE * height, DELTA_SIZE * height));
+              } else {
+                fill(0);
+                text(pool.size(), MAX_SIZE / 2 * height / 768, MAX_SIZE / 2 * height / 768);
               }
             });
+
     if (mousePressed) {
       fill(255);
       circle(width / 2, height / 2, img.pixelWidth * 1.5f);
@@ -94,12 +100,12 @@ public class MySketch extends PApplet {
 
   @Override
   public void mouseReleased() {
-    
+
     isClicked = false;
   }
 
   public static void main(String[] args) {
-    
+
     System.setProperty("sun.java2d.uiScale", "1.0");
     PApplet.main(MySketch.class);
   }

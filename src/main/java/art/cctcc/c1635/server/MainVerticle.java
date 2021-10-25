@@ -21,7 +21,6 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import processing.core.PApplet;
 import static art.cctcc.c1635.MySketch.MAX_SIZE;
 import static art.cctcc.c1635.MySketch.MIN_SIZE;
 
@@ -29,7 +28,6 @@ public class MainVerticle extends AbstractVerticle {
 
   static final Logger logger = Logger.getGlobal();
   int port = 8001;
-  PApplet p = new PApplet();
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {

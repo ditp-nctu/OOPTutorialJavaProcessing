@@ -35,14 +35,13 @@ import static art.cctcc.c1635.MySketch.MIN_SIZE;
 public class ServerMain {
 
   static final Logger logger = Logger.getGlobal();
-  static PApplet p = new PApplet();
   static int port = 8001;
 
   public static void main(String[] args) throws IOException {
 
     var server = HttpServer.create(new InetSocketAddress(port), 0);
     server.createContext("/object", ServerMain::_object);
-    server.setExecutor(Executors.newFixedThreadPool(10));
+    //server.setExecutor(Executors.newFixedThreadPool(10));
     server.start();
     logger.log(Level.INFO, " Server started on port {0}", port);
   }
