@@ -24,20 +24,23 @@ import processing.data.JSONObject;
  */
 public class Response {
 
-   static PApplet p = new PApplet();
-   public final JSONObject jo;
+  static PApplet p = new PApplet();
+  public final JSONObject jo;
 
-   public Response(String query, int min_size, int max_size) {
-      this.jo = new JSONObject()
-              .put("query", query)
-              .put("x", p.random(1))
-              .put("y", p.random(1))
-              .put("size", p.random(min_size, max_size))
-              .put("color", p.color(p.random(150, 250), p.random(150, 250), p.random(150, 250)));
-   }
+  public Response(String query, int min_size, int max_size, String msg) {
 
-   @Override
-   public String toString() {
-      return jo.toString();
-   }
+    this.jo = new JSONObject()
+            .put("query", query)
+            .put("x", p.random(1))
+            .put("y", p.random(1))
+            .put("size", p.random(min_size, max_size))
+            .put("color", p.color(p.random(150, 250), p.random(150, 250), p.random(150, 250)))
+            .put("message", msg);
+  }
+
+  @Override
+  public String toString() {
+
+    return jo.toString();
+  }
 }

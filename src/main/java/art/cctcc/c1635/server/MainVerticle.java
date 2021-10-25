@@ -27,39 +27,42 @@ import static art.cctcc.c1635.MySketch.MIN_SIZE;
 
 public class MainVerticle extends AbstractVerticle {
 
-   static final Logger logger = Logger.getGlobal();
-   int port = 8001;
-   PApplet p = new PApplet();
+  static final Logger logger = Logger.getGlobal();
+  int port = 8001;
+  PApplet p = new PApplet();
 
-   @Override
-   public void start(Promise<Void> startPromise) throws Exception {
+  @Override
+  public void start(Promise<Void> startPromise) throws Exception {
 
-      var router = Router.router(vertx);
-      router.get("/object").handler(this::_object);
-      vertx.createHttpServer()
-              .requestHandler(router)
-              .listen(port);
-      logger.log(Level.INFO, " Server started on port {0}", port);
-   }
+    var router = Router.router(vertx);
+    router.get("/object").handler(this::_object);
+    vertx.createHttpServer()
+            .requestHandler(router)
+            .listen(port);
+    logger.log(Level.INFO, " Server started on port {0}", port);
+  }
 
-   public void _object(RoutingContext ctx) {
+  public void _object(RoutingContext ctx) {
 
-      int min_size = MIN_SIZE, max_size = MAX_SIZE;
-      var queryParams = ctx.queryParams();
-      try {
-         min_size = Integer.parseInt(queryParams.get("min_size"));
-         max_size = Integer.parseInt(queryParams.get("max_size"));
-      } catch (NumberFormatException e) {
-         if (queryParams.isEmpty()) {
-            logger.log(Level.INFO, " empty query, using defaults.");
-         } else {
-            logger.log(Level.INFO, " invalid query: {0}", ctx.request().query());
-         }
+    int min_size = MIN_SIZE, max_size = MAX_SIZE;
+    var queryParams = ctx.queryParams();
+    var msg = "ok";
+    try {
+      min_size = Integer.parseInt(queryParams.get("min_size"));
+      max_size = Integer.parseInt(queryParams.get("max_size"));
+    } catch (NumberFormatException e) {
+      if (queryParams.isEmpty()) {
+        msg = "Empty query, using defaults.";
+        logger.log(Level.INFO, " {0}", msg);
+      } else {
+        msg = "Invalid query: " + ctx.request().query();
+        logger.log(Level.INFO, " {0}", msg);
       }
-      var response = new Response(ctx.request().query(), min_size, max_size);
-      logger.log(Level.INFO, " response = {0}", response);
-      ctx.response()
-              .putHeader("content-type", "application/json")
-              .end(response.toString());
-   }
+    }
+    var response = new Response(ctx.request().query(), min_size, max_size, msg);
+    logger.log(Level.INFO, " response = {0}", response);
+    ctx.response()
+            .putHeader("content-type", "application/json")
+            .end(response.toString());
+  }
 }

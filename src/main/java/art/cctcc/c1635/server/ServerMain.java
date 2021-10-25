@@ -34,44 +34,47 @@ import static art.cctcc.c1635.MySketch.MIN_SIZE;
  */
 public class ServerMain {
 
-   static final Logger logger = Logger.getGlobal();
-   static PApplet p = new PApplet();
-   static int port = 8001;
+  static final Logger logger = Logger.getGlobal();
+  static PApplet p = new PApplet();
+  static int port = 8001;
 
-   public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException {
 
-      var server = HttpServer.create(new InetSocketAddress(port), 0);
-      server.createContext("/object", ServerMain::_object);
-      server.setExecutor(Executors.newFixedThreadPool(10));
-      server.start();
-      logger.log(Level.INFO, " Server started on port {0}", port);
-   }
+    var server = HttpServer.create(new InetSocketAddress(port), 0);
+    server.createContext("/object", ServerMain::_object);
+    server.setExecutor(Executors.newFixedThreadPool(10));
+    server.start();
+    logger.log(Level.INFO, " Server started on port {0}", port);
+  }
 
-   public static void _object(HttpExchange exchange) {
+  public static void _object(HttpExchange exchange) {
 
-      int min_size = MIN_SIZE, max_size = MAX_SIZE;
-      var query = exchange.getRequestURI().getQuery();
-      try {
-         var params = Arrays.stream(query.split("&"))
-                 .map(s -> s.split("="))
-                 .filter(a -> a.length == 2)
-                 .collect(Collectors.toMap(p -> p[0].toLowerCase(), p -> p[1]));
-         min_size = Integer.parseInt(params.get("min_size"));
-         max_size = Integer.parseInt(params.get("max_size"));
-      } catch (NullPointerException ex) {
-         logger.log(Level.INFO, " empty query, using defaults.");
-      } catch (NumberFormatException ex) {
-         logger.log(Level.INFO, " invalid query: {0}", query);
-      }
-      var response = new Response(query, min_size, max_size);
-      logger.log(Level.INFO, " response = {0}", response);
-      try (var outputStream = exchange.getResponseBody()) {
-         var output = response.toString().getBytes();
-         exchange.sendResponseHeaders(200, output.length);
-         outputStream.write(output);
-         outputStream.flush();
-      } catch (IOException ex) {
-         Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
-      }
-   }
+    int min_size = MIN_SIZE, max_size = MAX_SIZE;
+    var query = exchange.getRequestURI().getQuery();
+    var msg = "ok";
+    try {
+      var params = Arrays.stream(query.split("&"))
+              .map(s -> s.split("="))
+              .filter(a -> a.length == 2)
+              .collect(Collectors.toMap(p -> p[0].toLowerCase(), p -> p[1]));
+      min_size = Integer.parseInt(params.get("min_size"));
+      max_size = Integer.parseInt(params.get("max_size"));
+    } catch (NullPointerException ex) {
+      msg = "Empty query, using defaults.";
+      logger.log(Level.INFO, " {0}", msg);
+    } catch (NumberFormatException ex) {
+      msg = "Invalid query: " + query;
+      logger.log(Level.INFO, " {0}", msg);
+    }
+    var response = new Response(query, min_size, max_size, msg);
+    logger.log(Level.INFO, " response = {0}", response);
+    try ( var outputStream = exchange.getResponseBody()) {
+      var output = response.toString().getBytes();
+      exchange.sendResponseHeaders(200, output.length);
+      outputStream.write(output);
+      outputStream.flush();
+    } catch (IOException ex) {
+      Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
+    }
+  }
 }
