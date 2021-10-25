@@ -29,7 +29,7 @@ import processing.core.*;
  */
 public class MySketchClient extends MySketch {
 
-   String server_address = "http://localhost";
+   String server_address = "http://localhost"; // 修改為你的 server 位置
    int port = 8001;
 
    @Override
@@ -56,6 +56,6 @@ public class MySketchClient extends MySketch {
 
    public static void main(String[] args) {
       System.setProperty("sun.java2d.uiScale", "1.0");
-      PApplet.main(MySketchClient.class);
+      PApplet.main(MySketchClient.class, args);
    }
 }
