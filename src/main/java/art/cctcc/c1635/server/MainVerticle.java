@@ -15,6 +15,7 @@
  */
 package art.cctcc.c1635.server;
 
+import art.cctcc.c1635.server.ex.InvalidParameterException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import io.vertx.core.AbstractVerticle;
@@ -48,15 +49,24 @@ public class MainVerticle extends AbstractVerticle {
     try {
       min_size = Integer.parseInt(queryParams.get("min_size"));
       max_size = Integer.parseInt(queryParams.get("max_size"));
+      if (min_size > max_size) {
+        throw new InvalidParameterException("Invalid query: min_size > max_size.");
+      }
     } catch (NumberFormatException e) {
       if (queryParams.isEmpty()) {
         msg = "Empty query, using defaults.";
         logger.log(Level.INFO, " {0}", msg);
       } else {
-        msg = "Invalid query: " + ctx.request().query();
+        msg = "Invalid query (must specify min_size & max_size): " + ctx.request().query();
         logger.log(Level.INFO, " {0}", msg);
       }
+    } catch (InvalidParameterException ex) {
+      msg = ex.getMessage();
+      logger.log(Level.INFO, " {0}", ex.getMessage());
+      min_size = MIN_SIZE;
+      max_size = MAX_SIZE;
     }
+
     var response = new Response(ctx.request().query(), min_size, max_size, msg);
     logger.log(Level.INFO, " response = {0}", response);
     ctx.response()
